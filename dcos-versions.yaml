@@ -1,6 +1,7 @@
 # Get version number, channel, and git commit ref: https://dcos.io/releases/
 # Get sha256: shasum -a 256 dcos_generate_config.sh
-latest: '1.11.0'
+# latest: '1.11.1'
+latest: '1.10.4'
 versions:
   '1.11.0':
     channel: 'stable/1.11.0'

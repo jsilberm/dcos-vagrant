@@ -453,6 +453,19 @@ Vagrant.configure(2) do |config|
         v.name = machine.vm.hostname
         v.cpus = machine_type['cpus'] || 2
         v.memory = machine_type['memory'] || 2048
+        if machine_type['type'] == 'master'
+                machine.vm.network "forwarded_port", guest: 80, host: 8080
+        end
+
+        if defined?(machine_type['disk']) && machine_type['type'] == 'agent-private'
+              line = `VBoxManage list systemproperties | grep "Default machine folder"`
+              vb_machine_folder = line.split(':')[1].strip()
+              disk = File.join(vb_machine_folder.to_s, (v.name).to_s, 'PXDisk.vdi')
+              unless File.exist?(disk)
+                  v.customize ['createhd', '--filename', disk, '--variant', 'Fixed', '--size', machine_type['disk'] ]
+              end
+              v.customize ['storageattach', :id, '--storagectl', 'IDE Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk]
+        end
 
         # Manually configure DNS
         v.auto_nat_dns_proxy = false

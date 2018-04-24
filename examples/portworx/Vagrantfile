@@ -469,7 +469,7 @@ Vagrant.configure(2) do |config|
         v.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 1000 ]
         # Add a second disk for Portworx
         if machine_type['type'] == 'agent-private'
-          disk = "/home/kib/VirtualBox VMs/#{name}.dcos/secondDisk.vdi"
+          disk = ".vagrant/#{name}.dcos/secondDisk.vdi"
           unless File.exist?(disk)
             v.customize ['createmedium', '--filename', disk, '--variant', 'Fixed', '--size', 8 * 1024]
           end
