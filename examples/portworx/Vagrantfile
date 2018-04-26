@@ -220,7 +220,7 @@ end
 
 # path to the provision shell scripts
 def provision_script_path(type)
-  "../../provision/bin/#{type}.sh"
+  "../..//provision/bin/#{type}.sh"
 end
 
 DCOS_VERSIONS_FILE = '../../dcos-versions.yaml'
@@ -453,6 +453,19 @@ Vagrant.configure(2) do |config|
         v.name = machine.vm.hostname
         v.cpus = machine_type['cpus'] || 2
         v.memory = machine_type['memory'] || 2048
+        if machine_type['type'] == 'master'
+                machine.vm.network "forwarded_port", guest: 80, host: 8080
+        end
+
+        if defined?(machine_type['disk']) && machine_type['type'] == 'agent-private'
+              line = `VBoxManage list systemproperties | grep "Default machine folder"`
+              vb_machine_folder = line.split(':')[1].strip()
+              disk = File.join(vb_machine_folder.to_s, (v.name).to_s, 'PXDisk.vdi')
+              unless File.exist?(disk)
+                  v.customize ['createhd', '--filename', disk, '--variant', 'Fixed', '--size', machine_type['disk'] ]
+              end
+              v.customize ['storageattach', :id, '--storagectl', 'IDE Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk]
+        end
 
         # Manually configure DNS
         v.auto_nat_dns_proxy = false
@@ -467,14 +480,6 @@ Vagrant.configure(2) do |config|
 
         # guest should sync time if more than 10s off host
         v.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 1000 ]
-        # Add a second disk for Portworx
-        if machine_type['type'] == 'agent-private'
-          disk = ".vagrant/#{name}.dcos/secondDisk.vdi"
-          unless File.exist?(disk)
-            v.customize ['createmedium', '--filename', disk, '--variant', 'Fixed', '--size', 8 * 1024]
-          end
-          v.customize ['storageattach', :id, '--storagectl', 'IDE Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk]
-        end
       end
 
       # Hack to remove loopback host alias that conflicts with vagrant-hostmanager

@@ -12,3 +12,7 @@ This environment has been qualified against:
 * VirtualBox 5.1.28
 
 Portworx can then be installed by following the DCOS installation docs at [docs.portworx.com](https://docs.portworx.com)
+
+When deploying Portworx from Universe for this `vagrant` cluster, make the following changes 
+* Use `-d enp0s8 -m enp0s8` as [portworx options](https://docs.portworx.com/scheduler/mesosphere-dcos/install.html#portworx-options)
+* Instead of the default values, specify `256` for the memory size of `etcd`, '`influxdb` and `lighthouse`. 
