@@ -11,7 +11,7 @@ This environment has been qualified against:
 * vagrant version 2.0.2
 * VirtualBox 5.1.28
 
-Portworx can then be installed by following the DCOS installation docs at [docs.portworx.com](https://docs.portworx.com/scheduler/mesosphere-dcos/install.html)
+Portworx can then be installed by following the [DCOS installation docs at docs.portworx.com](https://docs.portworx.com/scheduler/mesosphere-dcos/install.html)
 
 When deploying Portworx from Universe for this `vagrant` cluster, make the following changes 
 * Check the boxes to enable `etcd` and `lighthouse`
